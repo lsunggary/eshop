@@ -1,18 +1,19 @@
 package com.scott.eshop.inventory;
 
+import com.scott.eshop.inventory.listener.InitListener;
 import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisCluster;
 
 import java.util.HashSet;
@@ -49,6 +50,10 @@ public class EshopInventoryApplication {
         return sqlSessionFactoryBean.getObject();
     }
 
+    /**
+     * 构建jedis cluster工厂类的配置。
+     * @return
+     */
     @Bean
     public JedisCluster JedisClusterFactory() {
         Set<HostAndPort> jedisClusterNodes = new HashSet<HostAndPort>();
@@ -66,6 +71,19 @@ public class EshopInventoryApplication {
     @Bean
     public PlatformTransactionManager platformTransactionManager () {
         return new DataSourceTransactionManager(dataSource());
+    }
+
+    /**
+     * 注册监听器
+     * @return
+     */
+    @Bean
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public ServletListenerRegistrationBean servletListenerRegistrationBean() {
+        ServletListenerRegistrationBean servletListenerRegistrationBean =
+                new ServletListenerRegistrationBean();
+        servletListenerRegistrationBean.setListener(new InitListener());
+        return servletListenerRegistrationBean;
     }
 
     /**
