@@ -3,8 +3,11 @@ package com.scott.eshop.inventory.request;
 import com.scott.eshop.inventory.thread.RequestProcessorThreadPool;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 请求内存队列
@@ -20,6 +23,11 @@ public class RequestQueue {
      * 内存队列
      */
     private List<ArrayBlockingQueue<Request>> queues = new ArrayList<>();
+
+    /**
+     * 标识位 map
+     */
+    private Map<Integer, Boolean> flagMap = new ConcurrentHashMap<>();
 
     /**
      * 单例方式很多
@@ -54,4 +62,28 @@ public class RequestQueue {
         this.queues.add(queue);
     }
 
+    /**
+     * 获取内存数量
+     * @return
+     */
+    public int queueSize() {
+        return queues.size();
+    }
+
+    /**
+     * 获取内存队列
+     * @param index
+     * @return
+     */
+    public ArrayBlockingQueue getQueue(Integer index) {
+        return queues.get(index);
+    }
+
+    /**
+     * 获取标识位map
+     * @return
+     */
+    public Map<Integer, Boolean> getFlagMap() {
+        return flagMap;
+    }
 }

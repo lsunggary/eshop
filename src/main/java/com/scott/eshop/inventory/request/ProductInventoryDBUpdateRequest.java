@@ -38,10 +38,27 @@ public class ProductInventoryDBUpdateRequest implements Request{
     }
 
     @Override
-    public void process() {
+    public void process() throws InterruptedException {
+        System.out.println("===========日志===========：数据库更新请求开始执行，商品id："+productInventory.getProductId()+" ,商品库存："+productInventory.getInventory());
         // 删除redis中的缓存
         productInventoryService.removeProductInventoryCache(productInventory);
+        System.out.println("===========日志===========：以删除redis库的缓存");
+//        Thread.sleep(5000L);
         // 修改数据库中的库存
         productInventoryService.updateProductInventory(productInventory);
+    }
+
+    /**
+     * 获取商品id
+     * @return
+     */
+    @Override
+    public Integer getProductId() {
+        return productInventory.getProductId();
+    }
+
+    @Override
+    public boolean isForceRefresh() {
+        return false;
     }
 }

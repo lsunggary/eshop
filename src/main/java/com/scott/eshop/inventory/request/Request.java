@@ -10,5 +10,9 @@ package com.scott.eshop.inventory.request;
  **/
 public interface Request {
 
-    void process();
+    void process() throws InterruptedException;
+
+    Integer getProductId();
+
+    boolean isForceRefresh();
 }
